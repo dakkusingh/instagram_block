@@ -95,7 +95,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    * Most block plugins should not override this method. To add submission
    * handling for a specific block type, override BlockBase::blockSubmit().
    *
-   * @todo Add inline documentation to this method.
+   * Save the form values to the block configuration array.
    *
    * @see \Drupal\block\BlockBase::blockSubmit()
    */
