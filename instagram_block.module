@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * The module file for instagram_block module.
  */
 
 /**
@@ -19,27 +20,13 @@ function instagram_block_menu() {
 }
 
 /**
- * Theme implementation to output the instagram images.
- */
-function theme_instagram_block_image($variables) {
-  $element = $variables['element'];
-  $output = '
-    <a class="group" target="blank_" rel="group1" href="' . $element['link'] . '">
-      <img style="float: left; display: inline-block; margin: 0 5px 5px 0px; width: ' . $element['width'] . 'px; height: ' . $element['height'] . 'px;" src="' . $element['url'] . '">
-    </a>';
-
-  return $output;
-}
-
-/**
  * Implements hook_theme().
  */
 function instagram_block_theme() {
-  $items = array(
+  return array(
     'instagram_block_image' => array(
-      'render element' => 'element',
+      'variables' => array('height' => NULL,'width' => NULL, 'src' => NULL, 'href' => NULL),
+      'template' => 'instagram-block-image',
     ),
   );
-
-  return $items;
 }

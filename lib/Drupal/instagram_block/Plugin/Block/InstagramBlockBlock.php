@@ -129,11 +129,11 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
       $content['children'][$post->id] = array(
         '#markup' => '',
         '#theme' => 'instagram_block_image',
-        'post' => $post,
-        'link' => $post->link,
-        'url' => $post->images->thumbnail->url,
-        'width' => $configuration['width'],
-        'height' => $configuration['height'],
+        '#data' => $post,
+        '#href' => $post->link,
+        '#src' => $post->images->thumbnail->url,
+        '#width' => $configuration['width'],
+        '#height' => $configuration['height'],
       );
     }
     $block['subject'] = 'Instagram Block';

@@ -7,6 +7,8 @@
 
 namespace Drupal\instagram_block\Form;
 
+//use Drupal\Core\Config\ConfigFactory;
+//use Drupal\Core\Config\Context\ContextInterface;
 use Drupal\system\SystemConfigFormBase;
 
 /**
@@ -27,6 +29,23 @@ class InstagramBlockForm extends SystemConfigFormBase {
   public function buildForm(array $form, array &$form_state) {
     $form = array();
 
+    // Get the block configuration.
+    $block_settings = array();
+    foreach (list_themes() as $theme) {
+      if ($block = entity_load('block', $theme->name . '.instagramblock')) {
+
+        $block_settings[] = array(
+          'settings' => $block->get('settings'),
+          'block' => $block,
+        );
+      }
+    }
+    $block_settings = reset($block_settings);
+
+    // Set the block its settings to the form for use later.
+    $form['#data'] = $block_settings['settings'];
+    $form['#block'] = $block_settings['block'];
+
     $content = 'To configure your instagram account you need to authorise your account. To do this, click ';
     $path = 'https://instagram.com/oauth/authorize/';
     $options = array(
@@ -46,18 +65,6 @@ class InstagramBlockForm extends SystemConfigFormBase {
     $form['authorise'] = array(
       '#markup' => $content,
     );
-
-    // Create an array of empty keys to be used in storage variable has not been set.
-    $empty = array(
-      'user_id' => '',
-      'access_token' => '',
-      'count' => '',
-      'width' => '',
-      'height' => '',
-    );
-
-    // Store data from variable in $form for now.
-    $form['#data'] = variable_get('instagram_block_data', $empty);
 
     $form['user_id'] = array(
       '#type' => 'textfield',
@@ -81,7 +88,10 @@ class InstagramBlockForm extends SystemConfigFormBase {
    */
   public function submitForm(array &$form, array &$form_state) {
     if (isset($form_state['values'])) {
-      variable_set('instagram_block_data', $form_state['values']);
+      $block = $form['#block'];
+      $block->getPlugin()->setConfigurationValue('user_id', $form_state['values']['user_id']);
+      $block->getPlugin()->setConfigurationValue('access_token', $form_state['values']['access_token']);
+      $block->save();
     }
 
     parent::submitForm($form, $form_state);
