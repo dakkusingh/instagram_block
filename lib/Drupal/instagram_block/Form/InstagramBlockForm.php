@@ -38,6 +38,14 @@ class InstagramBlockForm extends SystemConfigFormBase {
         );
       }
     }
+    if (empty($block_settings)) {
+      $output = t('No instagram blocks have been created yet. ');
+      $output .= t('Please go to the blocks configuration ');
+      $output .= l(t('page'), '/admin/structure/block');
+      $output .= t(' to place a block.');
+
+      return array('#markup' => $output);
+    }
     $block_settings = reset($block_settings);
 
     // Set the block its settings to the form for use later.
@@ -57,7 +65,7 @@ class InstagramBlockForm extends SystemConfigFormBase {
       ),
     );
 
-    $content .= l('here', $path, $options);
+    $content .= l(t('here'), $path, $options);
     $content .= '.';
 
     $form['authorise'] = array(

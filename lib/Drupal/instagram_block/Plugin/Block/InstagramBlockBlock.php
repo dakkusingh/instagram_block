@@ -118,6 +118,11 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    */
   public function build() {
     $configuration = $this->configuration;
+
+    // If no configuration was saved, don't attempt to build block.
+    if (empty($configuration['user_id']) || empty($configuration['access_token'])) {
+      return;
+    }
     // Build a render array to return the Instagram Images.
     $content = array();
 
