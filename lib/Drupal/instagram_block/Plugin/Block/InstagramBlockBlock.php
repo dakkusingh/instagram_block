@@ -118,7 +118,6 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    */
   public function build() {
     $configuration = $this->configuration;
-    drupal_add_css(drupal_get_path('module', 'instagram_block') . '/css/block.css');
     // Build a render array to return the Instagram Images.
     $content = array();
 
@@ -134,6 +133,11 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
         '#src' => $post->images->thumbnail->url,
         '#width' => $configuration['width'],
         '#height' => $configuration['height'],
+        '#attached' => array(
+          'css' => array(
+            drupal_get_path('module', 'instagram_block') . '/css/block.css'
+          ),
+        ),
       );
     }
     $block['subject'] = 'Instagram Block';
