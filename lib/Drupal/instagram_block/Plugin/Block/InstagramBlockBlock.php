@@ -8,10 +8,8 @@
 namespace Drupal\instagram_block\Plugin\Block;
 
 use Drupal\block\BlockBase;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Component\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides an Instagram block.
@@ -22,14 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   module = "instagram_block"
  * )
  */
-class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInterface {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('request'));
-  }
+class InstagramBlockBlock extends BlockBase {
 
   /**
    * Overrides \Drupal\block\BlockBase::access().
@@ -145,7 +136,6 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
         ),
       );
     }
-    $block['subject'] = 'Instagram Block';
     $block['content'] = $content;
 
     return $block;
