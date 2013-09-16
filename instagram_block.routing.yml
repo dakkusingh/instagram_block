@@ -1,6 +1,6 @@
 
 block_admin_config_form:
-  pattern: '/admin/config/content/instagram_block'
+  path: '/admin/config/content/instagram_block'
   defaults:
     _form: 'Drupal\instagram_block\Form\InstagramBlockForm'
   requirements:
