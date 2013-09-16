@@ -8,7 +8,7 @@
 namespace Drupal\instagram_block\Plugin\Block;
 
 use Drupal\block\BlockBase;
-use Drupal\Component\Annotation\Plugin;
+use Drupal\block\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -18,10 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides an Instagram block.
  *
- * @Plugin(
+ * @Block(
  *   id = "instagram_block_block",
- *   admin_label = @Translation("Instagram block"),
- *   module = "instagram_block"
+ *   admin_label = @Translation("Instagram block")
  * )
  */
 class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInterface {
