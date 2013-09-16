@@ -7,12 +7,12 @@
 
 namespace Drupal\instagram_block\Form;
 
-use Drupal\system\SystemConfigFormBase;
+use Drupal\Core\Form\ConfigFormBase;
 
 /**
  * Configure instagram_block settings for this site.
  */
-class InstagramBlockForm extends SystemConfigFormBase {
+class InstagramBlockForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
