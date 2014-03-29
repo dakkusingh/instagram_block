@@ -89,22 +89,23 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    */
   public function blockForm($form, &$form_state) {
 
+    //die();
     $form['count'] = array(
       '#type' => 'textfield',
       '#title' => t('Number of images to display.'),
-      '#default_value' => $this->configuration['count'],
+      '#default_value' => isset($this->configuration['count']) ? $this->configuration['count'] : 4,
     );
 
     $form['width'] = array(
       '#type' => 'textfield',
       '#title' => t('Image width in pixels.'),
-      '#default_value' => $this->configuration['width'],
+      '#default_value' => isset($this->configuration['width']) ? $this->configuration['width'] : '',
     );
 
     $form['height'] = array(
       '#type' => 'textfield',
       '#title' => t('Image height in pixels.'),
-      '#default_value' => $this->configuration['height'],
+      '#default_value' => isset($this->configuration['height']) ? $this->configuration['height'] : '',
     );
 
     return $form;
@@ -113,8 +114,20 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
+  public function blockValidate($form, &$form_state) {
+    /*if (!is_numeric($form_state['values']['count'])) {
+      form_set_error('count', $form_state, t('Count must be numeric'));
+    }*/
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function blockSubmit($form, &$form_state) {
-    if (!form_get_errors()) {
+    if (\Drupal::formBuilder()->getAnyErrors()) {
+      return;
+    }
+    else {
       $this->configuration['count'] = $form_state['values']['count'];
       $this->configuration['width'] = $form_state['values']['width'];
       $this->configuration['height'] = $form_state['values']['height'];

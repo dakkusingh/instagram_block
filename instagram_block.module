@@ -6,20 +6,6 @@
  */
 
 /**
- * Implements hook_menu().
- */
-function instagram_block_menu() {
-  $items['admin/config/content/instagram_block'] = array(
-    'title' => 'Instagram Block',
-    'description' => 'Configuration page for Instagram Block.',
-    'access callback' => TRUE,
-    'router_name' => 'block_admin_config_form',
-  );
-
-  return $items;
-}
-
-/**
  * Implements hook_theme().
  */
 function instagram_block_theme() {
