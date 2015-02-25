@@ -99,7 +99,7 @@ class InstagramRequest {
           $error = new Exception($data->meta->error_type . ': ' . $data->meta->error_message, $data->meta->code);
         }
       }
-      watchdog_exception('instagram_block', $error);
+      watchdog('instagram_block', $error);
     }
   }
 
