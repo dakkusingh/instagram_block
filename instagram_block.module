@@ -150,8 +150,6 @@ function instagram_block_block_view($delta = '') {
 
   // Get configuration values.
   $config = variable_get('instagram_block_admin_settings', array());
-  //$values = variable_get('instagram_block_data', array());
-  $img_resolution = isset($values['img_resolution']) ? $values['img_resolution'] : 'thumbnail';
   $content = array();
   $block = array(
     'subject' => 'Instagram block',
@@ -185,6 +183,10 @@ function instagram_block_block_view($delta = '') {
       // Return no content, the request failed.
       return $block;
     }
+
+    // Set resolution from block config.
+    $img_resolution = isset($values['img_resolution']) ? $values['img_resolution'] : 'thumbnail';
+
     $response = $request->get_instagram_posts();
     foreach ($response as $post) {
       $url = $post->images->{$img_resolution}->url;
