@@ -7,20 +7,22 @@
 
 namespace Drupal\instagram_block\Plugin\Block;
 
-use Drupal\block\BlockBase;
-use Drupal\block\Annotation\Block;
-use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Guzzle\Http\Client;
+use Drupal\Core\Form\FormStateInterface;
+use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use GuzzleHttp\Exception\RequestException;
+use Drupal\Core\Url;
 
 /**
  * Provides an Instagram block.
  *
  * @Block(
  *   id = "instagram_block_block",
- *   admin_label = @Translation("Instagram block")
+ *   admin_label = @Translation("Instagram block"),
+ *   category = @Translation("Social")
  * )
  */
 class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInterface {
@@ -28,7 +30,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * The HTTP client to fetch the feed data with.
    *
-   * @var \Guzzle\Http\Client
+   * @var \GuzzleHttp\Client
    */
   protected $httpClient;
 
@@ -48,7 +50,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Guzzle\Http\Client $http_client
+   * @param \GuzzleHttp\Client $http_client
    *   The Guzzle HTTP client.
    * @param ConfigFactory $config_factory
    *   The factory for configuration objects.
@@ -63,12 +65,12 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('http_default_client'),
+      $container->get('http_client'),
       $container->get('config.factory')
     );
   }
@@ -87,7 +89,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function blockForm($form, &$form_state) {
+  public function blockForm($form, FormStateInterface $form_state) {
 
     //die();
     $form['count'] = array(
@@ -114,7 +116,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function blockValidate($form, &$form_state) {
+  public function blockValidate($form, FormStateInterface $form_state) {
     /*if (!is_numeric($form_state['values']['count'])) {
       form_set_error('count', $form_state, t('Count must be numeric'));
     }*/
@@ -123,14 +125,14 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit($form, &$form_state) {
-    if (\Drupal::formBuilder()->getAnyErrors()) {
+  public function blockSubmit($form, FormStateInterface $form_state) {
+    if ($form_state->hasAnyErrors()) {
       return;
     }
     else {
-      $this->configuration['count'] = $form_state['values']['count'];
-      $this->configuration['width'] = $form_state['values']['width'];
-      $this->configuration['height'] = $form_state['values']['height'];
+      $this->configuration['count'] = $form_state->getValue('count');
+      $this->configuration['width'] = $form_state->getValue('width');
+      $this->configuration['height'] = $form_state->getValue('height');
     }
   }
 
@@ -144,19 +146,25 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
 
     // If no configuration was saved, don't attempt to build block.
     if (empty($configuration['user_id']) || empty($configuration['access_token'])) {
+      // @TODO Display a message instructing user to configure module.
       return $build;
     }
 
     // Build url for http request.
-    $url = "https://api.instagram.com/v1/users/{$configuration['user_id']}/media/recent/";
-    $query = array(
-      'access_token' => $configuration['access_token'],
-      'count' => $this->configuration['count'],
-    );
+    $uri = "https://api.instagram.com/v1/users/{$configuration['user_id']}/media/recent/";
+    $options = [
+      'query' => [
+        'access_token' => $configuration['access_token'],
+        'count' => $this->configuration['count'],
+      ],
+    ];
+    $url = Url::fromUri($uri, $options)->toString();
 
     // Get the instagram images and decode.
-    $result = $this->_fetchData($url, $query);
-    $result = $result->json();
+    $result = $this->_fetchData($url);
+    if (!$result) {
+      return $build;
+    }
 
     foreach ($result['data'] as $post) {
       $build['children'][$post['id']] = array(
@@ -168,13 +176,12 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
         '#height' => $this->configuration['height'],
       );
     }
+
+    // Add css.
     if (!empty($build)) {
-      $build['#attached'] = array(
-        'css' => array(
-          drupal_get_path('module', 'instagram_block') . '/css/block.css'
-        ),
-      );
+      $build['#attached']['library'][] = 'instagram_block/instagram_block';
     }
+
     return $build;
   }
 
@@ -183,21 +190,23 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    *
    * @param string $url
    *   URL for http request.
-   * @param array $query
-   *   Query parameters for the url.
    *
-   * @return \Guzzle\Http\Message\Response
-   *   The encoded response containing the instagram images.
+   * @return bool|mixed
+   *   The encoded response containing the instagram images or FALSE.
    */
-  protected function _fetchData($url, array $query) {
+  protected function _fetchData($url) {
+    try {
+      $response = $this->httpClient->get($url, array('headers' => array('Accept' => 'application/json')));
+      $data = json_decode($response->getBody(), TRUE);
+      if (empty($data)) {
+        return FALSE;
+      }
 
-    $request = $this->httpClient->get($url);
-    foreach ($query as $key => $parameter) {
-      $request->getQuery()->set($key, $parameter);
+      return $data;
     }
-    $response = $request->send();
-
-    return $response;
+    catch (RequestException $e) {
+      return FALSE;
+    }
   }
 
 }

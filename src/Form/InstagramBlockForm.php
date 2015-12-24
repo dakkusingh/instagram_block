@@ -8,6 +8,10 @@
 namespace Drupal\instagram_block\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+
 
 /**
  * Configure instagram_block settings for this site.
@@ -24,25 +28,32 @@ class InstagramBlockForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
-    // Get module configuration.
-    $config = $this->configFactory->get('instagram_block.settings');
+  protected function getEditableConfigNames() {
+    return ['instagram_block.settings'];
+  }
 
-    $path = 'https://instagram.com/oauth/authorize/';
-    $options = array(
-      'query' => array(
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    // Get module configuration.
+    $config = $this->config('instagram_block.settings');
+
+    $options = [
+      'query' => [
         'client_id' => '759ec610e0c1416baa8a8a6b41552087',
         'redirect_uri' => 'http://instagram.yanniboi.com/configure/instagram',
         'response_type' => 'code',
-      ),
-      'attributes' => array(
-        'target' => '_blank',
-      ),
-    );
-    $link = l(t('here'), $path, $options);
+      ],
+    ];
+
+    $url = Url::fromUri('https://instagram.com/oauth/authorize/', $options);
+    $link = Link::fromTextAndUrl('here', $url)->toRenderable();
+    $link['#attributes']['target'] = '_blank';
+
 
     $form['authorise'] = array(
-      '#markup' => t('To configure your instagram account you need to authorise your account. To do this, click !link.', array('!link' => $link)),
+      '#markup' => t('To configure your instagram account you need to authorise your account. To do this, click %link.', array('%link' => render($link))),
     );
 
     $form['user_id'] = array(
@@ -65,14 +76,15 @@ class InstagramBlockForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $user_id = $form_state->getValue('user_id');
+    $access_token = $form_state->getValue('access_token');
+
     // Get module configuration.
-    $config = $this->configFactory->get('instagram_block.settings');
-    if (isset($form_state['values'])) {
-      $config->set('user_id', $form_state['values']['user_id'])
-        ->set('access_token', $form_state['values']['access_token'])
-        ->save();
-    }
+    $this->config('instagram_block.settings')
+      ->set('user_id', $user_id)
+      ->set('access_token', $access_token)
+      ->save();
 
     parent::submitForm($form, $form_state);
   }
