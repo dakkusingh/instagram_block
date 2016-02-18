@@ -90,8 +90,6 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function blockForm($form, FormStateInterface $form_state) {
-
-    //die();
     $form['count'] = array(
       '#type' => 'textfield',
       '#title' => t('Number of images to display.'),
@@ -110,6 +108,20 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
       '#default_value' => isset($this->configuration['height']) ? $this->configuration['height'] : '',
     );
 
+    $image_options = array(
+      'thumbnail' => t('Thumbnail (150x150)'),
+      'low_resolution' => t('Low (320x320)'),
+      'standard_resolution' => t('Standard (640x640)'),
+    );
+
+    $form['img_resolution'] = array(
+      '#type' => 'select',
+      '#title' => t('Image resolution'),
+      '#description' => t('Choose the quality of the images you would like to display.'),
+      '#default_value' => isset($this->configuration['img_resolution']) ? $this->configuration['img_resolution'] : 'thumbnail',
+      '#options' => $image_options,
+    );
+
     return $form;
   }
 
@@ -117,9 +129,10 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function blockValidate($form, FormStateInterface $form_state) {
-    /*if (!is_numeric($form_state['values']['count'])) {
-      form_set_error('count', $form_state, t('Count must be numeric'));
-    }*/
+    // @TODO This is postponed until the resolution of [#2537732]
+    //if (!is_numeric($form_state->getValue('count'))) {
+    //  $form_state->setErrorByName('count', $this->t('Count must be numeric'));
+    //}
   }
 
   /**
@@ -133,6 +146,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
       $this->configuration['count'] = $form_state->getValue('count');
       $this->configuration['width'] = $form_state->getValue('width');
       $this->configuration['height'] = $form_state->getValue('height');
+      $this->configuration['img_resolution'] = $form_state->getValue('img_resolution');
     }
   }
 
@@ -171,7 +185,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
         '#theme' => 'instagram_block_image',
         '#data' => $post,
         '#href' => $post['link'],
-        '#src' => $post['images']['thumbnail']['url'],
+        '#src' => $post['images'][$this->configuration['img_resolution']]['url'],
         '#width' => $this->configuration['width'],
         '#height' => $this->configuration['height'],
       );
