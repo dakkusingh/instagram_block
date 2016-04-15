@@ -369,8 +369,13 @@ class InstagramLocation {
       $this->name = $location->name;
     }
 
-    $this->latitude = $location->latitude;
-    $this->longitude = $location->longitude;
+    if (isset($location->latitude)) {
+      $this->latitude = $location->latitude;
+    }
+
+    if (isset($location->longitude)) {
+      $this->longitude = $location->longitude;
+    }
   }
 }
 
