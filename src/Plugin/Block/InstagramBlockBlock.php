@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\instagram_block\Plugin\Block\InstagramBlockBlock.
- */
-
 namespace Drupal\instagram_block\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -84,7 +79,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
       'width' => 150,
       'height' => 150,
       'img_resolution' => 'thumbnail',
-      'cache_time_minutes' => 1440
+      'cache_time_minutes' => 1440,
     ];
   }
 
@@ -139,9 +134,9 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    */
   public function blockValidate($form, FormStateInterface $form_state) {
     // @TODO This is postponed until the resolution of [#2537732]
-    //if (!is_numeric($form_state->getValue('count'))) {
-    //  $form_state->setErrorByName('count', $this->t('Count must be numeric'));
-    //}
+    /*if (!is_numeric($form_state->getValue('count'))) {
+    $form_state->setErrorByName('count', $this->t('Count must be numeric'));
+    }*/
   }
 
   /**
@@ -185,7 +180,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
     $url = Url::fromUri($uri, $options)->toString();
 
     // Get the instagram images and decode.
-    $result = $this->_fetchData($url);
+    $result = $this->fetchData($url);
     if (!$result) {
       return $build;
     }
@@ -214,7 +209,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   }
 
   /**
-   * Sends a http request to the Instagram API Server
+   * Sends a http request to the Instagram API Server.
    *
    * @param string $url
    *   URL for http request.
@@ -222,7 +217,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    * @return bool|mixed
    *   The encoded response containing the instagram images or FALSE.
    */
-  protected function _fetchData($url) {
+  protected function fetchData($url) {
     try {
       $response = $this->httpClient->get($url, array('headers' => array('Accept' => 'application/json')));
       $data = json_decode($response->getBody(), TRUE);

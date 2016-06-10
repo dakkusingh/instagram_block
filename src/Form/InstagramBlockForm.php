@@ -1,17 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\instagram_block\Form\InstagramBlockForm.
- */
-
 namespace Drupal\instagram_block\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
-use Drupal\Core\Url;
-
 
 /**
  * Configure instagram_block settings for this site.
@@ -21,7 +13,7 @@ class InstagramBlockForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'instagram_block_config_form';
   }
 
