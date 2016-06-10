@@ -39,21 +39,8 @@ class InstagramBlockForm extends ConfigFormBase {
     // Get module configuration.
     $config = $this->config('instagram_block.settings');
 
-    $options = [
-      'query' => [
-        'client_id' => '759ec610e0c1416baa8a8a6b41552087',
-        'redirect_uri' => 'http://instagram.yanniboi.com/configure/instagram',
-        'response_type' => 'code',
-      ],
-    ];
-
-    $url = Url::fromUri('https://instagram.com/oauth/authorize/', $options);
-    $link = Link::fromTextAndUrl('here', $url)->toRenderable();
-    $link['#attributes']['target'] = '_blank';
-
-
     $form['authorise'] = array(
-      '#markup' => t('To configure your instagram account you need to authorise your account. To do this, click %link.', array('%link' => render($link))),
+      '#markup' => t('Instagram Block requires connecting to a specific Instagram account. You need to be able to log into that account when asked to. The <a href="!help">Authenticate with Instagram</a> page helps with the setup.', array('%link' => 'https://www.drupal.org/node/2746185')),
     );
 
     $form['user_id'] = array(
