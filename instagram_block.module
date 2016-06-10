@@ -41,15 +41,20 @@ function instagram_block_help($path, $arg) {
  * Defines the new instagram block.
  */
 function instagram_block_block_info() {
+  // @todo Find a better way to manage access for tag block.
+  $tag_block = variable_get('instagram_block_enable_tag_block', FALSE);
+
   $blocks['instagram_block'] = array(
     'info' => t('Instagram Block - User Block'),
     'cache' => DRUPAL_CACHE_GLOBAL,
   );
 
-  $blocks['instagram_block_tag'] = array(
-    'info' => t('Instagram Block - Tag Block'),
-    'cache' => DRUPAL_CACHE_GLOBAL,
-  );
+  if ($tag_block) {
+    $blocks['instagram_block_tag'] = array(
+      'info' => t('Instagram Block - Tag Block'),
+      'cache' => DRUPAL_CACHE_GLOBAL,
+    );
+  }
 
   return $blocks;
 }
