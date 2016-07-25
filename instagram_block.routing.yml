@@ -4,4 +4,4 @@ instagram_block.admin:
     _form: 'Drupal\instagram_block\Form\InstagramBlockForm'
     _title: 'Configure Instagram Account'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'administer site configuration+administer instagram block'
