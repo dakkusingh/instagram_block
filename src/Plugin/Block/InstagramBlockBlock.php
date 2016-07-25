@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\Url;
+use Drupal\Component\Serialization\Json;
 
 /**
  * Provides an Instagram block.
@@ -132,16 +133,6 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function blockValidate($form, FormStateInterface $form_state) {
-    // @TODO This is postponed until the resolution of [#2537732]
-    /*if (!is_numeric($form_state->getValue('count'))) {
-    $form_state->setErrorByName('count', $this->t('Count must be numeric'));
-    }*/
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function blockSubmit($form, FormStateInterface $form_state) {
     if ($form_state->hasAnyErrors()) {
       return;
@@ -220,7 +211,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   protected function fetchData($url) {
     try {
       $response = $this->httpClient->get($url, array('headers' => array('Accept' => 'application/json')));
-      $data = json_decode($response->getBody(), TRUE);
+      $data = Json::decode($response->getBody());
       if (empty($data)) {
         return FALSE;
       }
