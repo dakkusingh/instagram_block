@@ -36,7 +36,7 @@ class InstagramBlockForm extends ConfigFormBase {
     );
 
     $form['user_id'] = array(
-      '#type' => 'textfield',
+      '#type' => 'number',
       '#title' => t('User Id'),
       '#description' => t('Your unique Instagram user id. Eg. 460786510'),
       '#default_value' => $config->get('user_id'),
