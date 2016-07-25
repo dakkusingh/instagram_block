@@ -1,6 +1,6 @@
 instagram_block.settings:
   type: mapping
-  label: 'Instagram Block Map.'
+  label: 'Instagram Block Map'
   mapping:
     user_id:
       type: label
