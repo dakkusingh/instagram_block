@@ -37,7 +37,7 @@ function instagram_block_help($route_name, RouteMatchInterface $route_match) {
 function instagram_block_theme() {
   return array(
     'instagram_block_image' => array(
-      'variables' => array('height' => NULL,'width' => NULL, 'src' => NULL, 'href' => NULL),
+      'variables' => array('data' => NULL, 'height' => NULL,'width' => NULL, 'src' => NULL, 'href' => NULL),
       'template' => 'instagram-block-image',
     ),
   );
