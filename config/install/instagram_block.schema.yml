@@ -1,0 +1,10 @@
+instagram_block.settings:
+  type: mapping
+  label: 'Instagram Block Map.'
+  mapping:
+    user_id:
+      type: label
+      label: 'User ID'
+    access_token:
+      type: label
+      label: 'Access Token'
