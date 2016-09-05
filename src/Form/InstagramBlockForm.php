@@ -32,20 +32,20 @@ class InstagramBlockForm extends ConfigFormBase {
     $config = $this->config('instagram_block.settings');
 
     $form['authorise'] = array(
-      '#markup' => t('Instagram Block requires connecting to a specific Instagram account. You need to be able to log into that account when asked to. The <a href="!help">Authenticate with Instagram</a> page helps with the setup.', array('%link' => 'https://www.drupal.org/node/2746185')),
+      '#markup' => $this->t('Instagram Block requires connecting to a specific Instagram account. You need to be able to log into that account when asked to. The <a href="!help">Authenticate with Instagram</a> page helps with the setup.', array('%link' => 'https://www.drupal.org/node/2746185')),
     );
 
     $form['user_id'] = array(
       '#type' => 'number',
-      '#title' => t('User Id'),
-      '#description' => t('Your unique Instagram user id. Eg. 460786510'),
+      '#title' => $this->t('User Id'),
+      '#description' => $this->t('Your unique Instagram user id. Eg. 460786510'),
       '#default_value' => $config->get('user_id'),
     );
 
     $form['access_token'] = array(
       '#type' => 'textfield',
-      '#title' => t('Access Token'),
-      '#description' => t('Your Instagram access token. Eg. 460786509.ab103e5.a54b6834494643588d4217ee986384a8'),
+      '#title' => $this->t('Access Token'),
+      '#description' => $this->t('Your Instagram access token. Eg. 460786509.ab103e5.a54b6834494643588d4217ee986384a8'),
       '#default_value' => $config->get('access_token'),
     );
 

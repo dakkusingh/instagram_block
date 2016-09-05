@@ -90,40 +90,40 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   public function blockForm($form, FormStateInterface $form_state) {
     $form['count'] = array(
       '#type' => 'number',
-      '#title' => t('Number of images to display.'),
+      '#title' => $this->t('Number of images to display.'),
       '#default_value' => $this->configuration['count'],
     );
 
     $form['width'] = array(
       '#type' => 'number',
-      '#title' => t('Image width in pixels.'),
+      '#title' => $this->t('Image width in pixels.'),
       '#default_value' => $this->configuration['width'],
     );
 
     $form['height'] = array(
       '#type' => 'number',
-      '#title' => t('Image height in pixels.'),
+      '#title' => $this->t('Image height in pixels.'),
       '#default_value' => $this->configuration['height'],
     );
 
     $image_options = array(
-      'thumbnail' => t('Thumbnail (150x150)'),
-      'low_resolution' => t('Low (320x320)'),
-      'standard_resolution' => t('Standard (640x640)'),
+      'thumbnail' => $this->t('Thumbnail (150x150)'),
+      'low_resolution' => $this->t('Low (320x320)'),
+      'standard_resolution' => $this->t('Standard (640x640)'),
     );
 
     $form['img_resolution'] = array(
       '#type' => 'select',
-      '#title' => t('Image resolution'),
-      '#description' => t('Choose the quality of the images you would like to display.'),
+      '#title' => $this->t('Image resolution'),
+      '#description' => $this->t('Choose the quality of the images you would like to display.'),
       '#default_value' => $this->configuration['img_resolution'],
       '#options' => $image_options,
     );
 
     $form['cache_time_minutes'] = array(
       '#type' => 'number',
-      '#title' => t('Cache time in minutes'),
-      '#description' => t("Default is 1440 - 24 hours. This is important for performance reasons and so the Instagram API limits isn't reached on busy sites."),
+      '#title' => $this->t('Cache time in minutes'),
+      '#description' => $this->t("Default is 1440 - 24 hours. This is important for performance reasons and so the Instagram API limits isn't reached on busy sites."),
       '#default_value' => $this->configuration['cache_time_minutes'],
     );
 
