@@ -1,6 +1,6 @@
 instagram_block.settings:
-  type: mapping
-  label: 'Instagram Block Map'
+  type: config_object
+  label: 'Instagram Block Settings'
   mapping:
     user_id:
       type: label
