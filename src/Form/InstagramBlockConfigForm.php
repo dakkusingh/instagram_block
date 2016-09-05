@@ -4,11 +4,13 @@ namespace Drupal\instagram_block\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 /**
  * Configure instagram_block settings for this site.
  */
-class InstagramBlockForm extends ConfigFormBase {
+class InstagramBlockConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
@@ -32,7 +34,7 @@ class InstagramBlockForm extends ConfigFormBase {
     $config = $this->config('instagram_block.settings');
 
     $form['authorise'] = array(
-      '#markup' => $this->t('Instagram Block requires connecting to a specific Instagram account. You need to be able to log into that account when asked to. The <a href="!help">Authenticate with Instagram</a> page helps with the setup.', array('%link' => 'https://www.drupal.org/node/2746185')),
+      '#markup' => $this->t('Instagram Block requires connecting to a specific Instagram account. You need to be able to log into that account when asked to. The @help page helps with the setup.', array('@help' => Link::fromTextAndUrl($this->t('Authenticate with Instagram'), Url::fromUri('https://www.drupal.org/node/2746185'))->toString())),
     );
 
     $form['user_id'] = array(
