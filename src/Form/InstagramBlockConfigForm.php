@@ -37,13 +37,6 @@ class InstagramBlockConfigForm extends ConfigFormBase {
       '#markup' => $this->t('Instagram Block requires connecting to a specific Instagram account. You need to be able to log into that account when asked to. The @help page helps with the setup.', array('@help' => Link::fromTextAndUrl($this->t('Authenticate with Instagram'), Url::fromUri('https://www.drupal.org/node/2746185'))->toString())),
     );
 
-    $form['user_id'] = array(
-      '#type' => 'number',
-      '#title' => $this->t('User Id'),
-      '#description' => $this->t('Your unique Instagram user id. Eg. 460786510'),
-      '#default_value' => $config->get('user_id'),
-    );
-
     $form['access_token'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Access Token'),
@@ -58,12 +51,10 @@ class InstagramBlockConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $user_id = $form_state->getValue('user_id');
     $access_token = $form_state->getValue('access_token');
 
     // Get module configuration.
     $this->config('instagram_block.settings')
-      ->set('user_id', $user_id)
       ->set('access_token', $access_token)
       ->save();
 

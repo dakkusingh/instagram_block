@@ -88,21 +88,28 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function blockForm($form, FormStateInterface $form_state) {
+    $form['user_id'] = array(
+      '#type' => 'number',
+      '#title' => $this->t('User id'),
+      '#description' => $this->t('The unique Instagram user id of the account to be used for this block. Eg. 460786510'),
+      '#default_value' => $this->configuration['user_id'],
+    );
+
     $form['count'] = array(
       '#type' => 'number',
-      '#title' => $this->t('Number of images to display.'),
+      '#title' => $this->t('Number of images to display'),
       '#default_value' => $this->configuration['count'],
     );
 
     $form['width'] = array(
       '#type' => 'number',
-      '#title' => $this->t('Image width in pixels.'),
+      '#title' => $this->t('Image width in pixels'),
       '#default_value' => $this->configuration['width'],
     );
 
     $form['height'] = array(
       '#type' => 'number',
-      '#title' => $this->t('Image height in pixels.'),
+      '#title' => $this->t('Image height in pixels'),
       '#default_value' => $this->configuration['height'],
     );
 
@@ -143,6 +150,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
       $this->configuration['height'] = $form_state->getValue('height');
       $this->configuration['img_resolution'] = $form_state->getValue('img_resolution');
       $this->configuration['cache_time_minutes'] = $form_state->getValue('cache_time_minutes');
+      $this->configuration['user_id'] = $form_state->getValue('user_id');
     }
   }
 
@@ -155,13 +163,13 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
     $module_config = $this->configFactory->get('instagram_block.settings')->get();
 
     // If no configuration was saved, don't attempt to build block.
-    if (empty($module_config['user_id']) || empty($module_config['access_token'])) {
+    if (empty($this->configuration['user_id']) || empty($module_config['access_token'])) {
       // @TODO Display a message instructing user to configure module.
       return $build;
     }
 
     // Build url for http request.
-    $uri = "https://api.instagram.com/v1/users/{$module_config['user_id']}/media/recent/";
+    $uri = "https://api.instagram.com/v1/users/{$this->configuration['user_id']}/media/recent/";
     $options = [
       'query' => [
         'access_token' => $module_config['access_token'],
@@ -193,7 +201,13 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
     }
 
     // Cache for a day.
-    $build['#cache']['keys'] = ['instagram_block', 'block'];
+    $build['#cache']['keys'] = [
+      'block',
+      'instagram_block',
+      $this->configuration['id'],
+      $this->configuration['user_id'],
+    ];
+    $build['#cache']['context'][] = 'languages:language_content';
     $build['#cache']['max_age'] = $this->configuration['cache_time_minutes'] * 60;
 
     return $build;

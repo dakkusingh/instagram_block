@@ -36,16 +36,9 @@ class InstagramBlockConfigFormTest extends WebTestBase {
    * Tests Instagram Block Configuration Form.
    */
   public function testConfigForm() {
-    $edit['user_id'] = 460786510;
     $edit['access_token'] = $this->randomString(20);
     $this->drupalPostForm('admin/config/content/instagram_block', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'), t('Saved configuration'));
-
-    // Tests user_id numeric validation.
-    $edit['user_id'] = $this->randomString(10);
-    $edit['access_token'] = $this->randomString(20);
-    $this->drupalPostForm('admin/config/content/instagram_block', $edit, t('Save configuration'));
-    $this->assertText(t('User Id must be a number.'), t('Saved configuration'));
   }
 
 }
