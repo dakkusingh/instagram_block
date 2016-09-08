@@ -70,3 +70,4 @@ MAINTAINERS
 
 Current maintainers:
 * Yan Loetzer (yanniboi) - https://www.drupal.org/u/yanniboi
+* Naveen Valecha (naveenvalecha) - https://www.drupal.org/u/naveenvalecha
