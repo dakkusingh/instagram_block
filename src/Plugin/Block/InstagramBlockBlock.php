@@ -76,6 +76,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    */
   public function defaultConfiguration() {
     return [
+      'user_id' => '',
       'count' => 4,
       'width' => 150,
       'height' => 150,
