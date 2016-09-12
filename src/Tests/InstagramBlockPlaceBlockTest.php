@@ -12,7 +12,9 @@ use Drupal\simpletest\WebTestBase;
 class InstagramBlockPlaceBlockTest extends WebTestBase {
 
   /**
-   * {@inheritdoc}
+   * Modules to install.
+   *
+   * @var array
    */
   public static $modules = ['instagram_block'];
 
