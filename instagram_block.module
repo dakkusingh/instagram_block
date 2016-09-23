@@ -195,16 +195,16 @@ function instagram_block_block_save($delta = '', $edit = array()) {
  * Fetches the instagram photos and creates a render array.
  */
 function instagram_block_block_view($delta = '') {
-  $block = array();
-
-  // Add instagram_block specific styles.
-  drupal_add_css(drupal_get_path('module', 'instagram_block') . '/css/instagram-block.css');
-
   // Get configuration values.
   $config = variable_get('instagram_block_admin_settings', array());
   $content = array();
   $block = array(
     'subject' => 'Instagram block',
+    'content' => array(
+      '#attached' => array(
+        'css' => array(drupal_get_path('module', 'instagram_block') . '/css/instagram-block.css'),
+      ),
+    ),
   );
 
   // Check that block configuration is available.
@@ -258,7 +258,7 @@ function instagram_block_block_view($delta = '') {
     }
   }
 
-  $block['content'] = theme('instagram_block', array(
+  $block['content']['#markup'] = theme('instagram_block', array(
     'content' => $content,
     'response' => isset($response) ? $response : NULL,
   ));
