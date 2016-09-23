@@ -208,7 +208,7 @@ function instagram_block_block_view($delta = '') {
   );
 
   // Check that block configuration is available.
-  if (!isset($config['user_id']) || !isset($config['access_token'])) {
+  if (empty($config['user_id']) || empty($config['access_token'])) {
     // Remind user to fill in configuration.
     $content = instagram_block_get_configuration_reminder();
   }
@@ -260,7 +260,7 @@ function instagram_block_block_view($delta = '') {
 
   $block['content'] = theme('instagram_block', array(
     'content' => $content,
-    'response' => $response
+    'response' => isset($response) ? $response : NULL,
   ));
 
   return $block;
