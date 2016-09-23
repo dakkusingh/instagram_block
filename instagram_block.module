@@ -43,16 +43,18 @@ function instagram_block_help($path, $arg) {
 function instagram_block_block_info() {
   // @todo Find a better way to manage access for tag block.
   $tag_block = variable_get('instagram_block_enable_tag_block', FALSE);
+  $block_config = variable_get('instagram_block_user_block_settings', array());
 
   $blocks['instagram_block'] = array(
     'info' => t('Instagram Block - User Block'),
-    'cache' => DRUPAL_CACHE_GLOBAL,
+    'cache' => isset($block_config['block_cache']) ? $block_config['block_cache'] : DRUPAL_CACHE_GLOBAL,
   );
 
   if ($tag_block) {
+    $tag_block_config = variable_get('instagram_block_tag_block_settings', array());
     $blocks['instagram_block_tag'] = array(
       'info' => t('Instagram Block - Tag Block'),
-      'cache' => DRUPAL_CACHE_GLOBAL,
+      'cache' => isset($tag_block_config['block_cache']) ? $tag_block_config['block_cache'] : DRUPAL_CACHE_GLOBAL,
     );
   }
 
@@ -112,6 +114,19 @@ function instagram_block_block_configure($delta = '') {
     '#options' => $image_options,
   );
 
+  $form['block_cache'] = array(
+    '#type' => 'select',
+    '#title' => t('Block Cache Settings'),
+    '#description' => t('Configure block caching.'),
+    '#options' => array(
+      DRUPAL_CACHE_PER_ROLE => t('Cache block per role'),
+      DRUPAL_CACHE_PER_USER => t('Cache block per user'),
+      DRUPAL_CACHE_PER_PAGE => t('Cache block per page'),
+      DRUPAL_CACHE_GLOBAL => t('Cache block globally'),
+      DRUPAL_NO_CACHE => t('Don\'t cache block'),
+    ),
+  );
+
   switch ($delta) {
     case 'instagram_block':
       // Store data from variable in $form for now.
@@ -124,6 +139,7 @@ function instagram_block_block_configure($delta = '') {
       $form['width']['#default_value'] = isset($form['#block_data']['width']) ? $form['#block_data']['width'] : '';
       $form['height']['#default_value'] = isset($form['#block_data']['height']) ? $form['#block_data']['height'] : '';
       $form['img_resolution']['#default_value'] = isset($form['#block_data']['img_resolution']) ? $form['#block_data']['img_resolution'] : '';
+      $form['block_cache']['#default_value'] = isset($form['#block_data']['block_cache']) ? $form['#block_data']['block_cache'] : DRUPAL_CACHE_GLOBAL;
 
       break;
     case 'instagram_block_tag':
@@ -136,6 +152,7 @@ function instagram_block_block_configure($delta = '') {
       $form['width']['#default_value'] = isset($form['#block_data']['width']) ? $form['#block_data']['width'] : '';
       $form['height']['#default_value'] = isset($form['#block_data']['height']) ? $form['#block_data']['height'] : '';
       $form['img_resolution']['#default_value'] = isset($form['#block_data']['img_resolution']) ? $form['#block_data']['img_resolution'] : '';
+      $form['block_cache']['#default_value'] = isset($form['#block_data']['block_cache']) ? $form['#block_data']['block_cache'] : DRUPAL_CACHE_GLOBAL;
 
       $form['tag'] = array(
         '#type' => 'textfield',
@@ -201,12 +218,14 @@ function instagram_block_block_view($delta = '') {
       switch ($delta) {
         case 'instagram_block':
           $values = variable_get('instagram_block_user_block_settings', array());
+          drupal_alter('instagram_block_settings', $delta, $values, $config);
           $request = new InstagramRequest($config, $values);
           $request->requestUserMedia();
           $block['subject'] = t('Instagram Block - User Block');
           break;
         case 'instagram_block_tag':
           $values = variable_get('instagram_block_tag_block_settings', array());
+          drupal_alter('instagram_block_settings', $delta, $values, $config);
           $request = new InstagramRequest($config, $values);
           $request->requestTagMedia();
           $block['subject'] = t('Instagram Block - Tag Block');
