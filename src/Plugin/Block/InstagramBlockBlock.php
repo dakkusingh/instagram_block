@@ -209,7 +209,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
       $this->configuration['user_id'],
     ];
     $build['#cache']['context'][] = 'languages:language_content';
-    $build['#cache']['max_age'] = $this->configuration['cache_time_minutes'] * 60;
+    $build['#cache']['max-age'] = $this->configuration['cache_time_minutes'] * 60;
 
     return $build;
   }
