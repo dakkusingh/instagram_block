@@ -306,3 +306,19 @@ function instagram_block_get_configuration_reminder() {
     '#markup' => t('Please don\'t forget to !configure this block.', array('!configure' => l(t('configure'),'admin/config/services/instagram_block')))
   );
 }
+
+/**
+ * Preprocess variables for instagram-block-image.tpl.php
+ *
+ * Provides a default caption to be used as the alt text for an img tag.
+ *
+ * @see instagram-block-image.tpl.php
+ */
+function template_preprocess_instagram_block_image(&$variables) {
+  if (!empty($variables['post']->caption->text)) {
+    $variables['caption'] = $variables['post']->caption->text;
+  }
+  else {
+    $variables['caption'] = t('Instagram image, no caption provided by author.');
+  }
+}
