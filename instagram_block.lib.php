@@ -37,7 +37,7 @@ class InstagramRequest {
    * Builds a request for {user} media.
    */
   public function requestUserMedia() {
-    $url = 'https://api.instagram.com/v1/users/' . $this->config['user_id'] . '/media/recent/';
+    $url = 'https://api.instagram.com/v1/users/self/media/recent/';
     $params = array(
       'access_token' => $this->config['access_token'],
       'count' => $this->values['count'],

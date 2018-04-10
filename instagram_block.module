@@ -72,7 +72,6 @@ function instagram_block_block_configure($delta = '') {
 
   // Default values
   $empty = array(
-    'user_id' => '',
     'access_token' => '',
   );
 
@@ -208,7 +207,7 @@ function instagram_block_block_view($delta = '') {
   );
 
   // Check that block configuration is available.
-  if (empty($config['user_id']) || empty($config['access_token'])) {
+  if (empty($config['access_token'])) {
     // Remind user to fill in configuration.
     $content = instagram_block_get_configuration_reminder();
   }
