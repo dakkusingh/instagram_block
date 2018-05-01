@@ -18,7 +18,7 @@ they should appear in the block. The images are individually exposed to the
 drupal theme layer, so developers have access to an all of the variables
 provided by the Instagram API should they choose to extent the block.
 
-For more informations see the Instagram developer pages:
+For more information see the Instagram developer pages:
 http://instagram.com/developer/endpoints/users/#get_users_media_recent
 
 For a full description of the module, visit the project page:
@@ -30,22 +30,23 @@ https://www.drupal.org/project/issues/instagram_block
 REQUIREMENTS
 ------------
 
-No special requirements.
+This module requires Instagram API Module. https://www.drupal.org/project/instagram_api
 
 INSTALLATION
 ------------
-
 Install as you would normally install a contributed Drupal module. See:
 https://www.drupal.org/docs/8/extending-drupal/installing-contributed-modules
 for further information.
 
 CONFIGURATION
 ------------
+Configure Instagram API by visiting:
+/admin/config/media/instagram_api
+
+Make sure you have configured the Instagram API and setup the Access Token
+
 To add Instagram Block to specific content region Go to Block Layout.
 i.e Home-> Administration-> Structure-> Block layout.
-
-You also need to add the Instagram Access Token of the Instagram account
-you are pulling posts from as part of the block configuration.
 
 MULTIPLE BLOCKS
 ------------
@@ -68,3 +69,4 @@ MAINTAINERS
 Current maintainers:
 * Yan Loetzer (yanniboi) - https://www.drupal.org/u/yanniboi
 * Naveen Valecha (naveenvalecha) - https://www.drupal.org/u/naveenvalecha
+* Janak Singh (dakku) - https://www.drupal.org/u/dakku
