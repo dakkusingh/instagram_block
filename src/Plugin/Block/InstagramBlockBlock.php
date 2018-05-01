@@ -7,11 +7,9 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
-use GuzzleHttp\Client;
+use Drupal\instagram_api\Service\Users as InstagramApiUsers;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\Url;
-use Drupal\Component\Serialization\Json;
 
 /**
  * Provides an Instagram block.
@@ -25,18 +23,18 @@ use Drupal\Component\Serialization\Json;
 class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The HTTP client to fetch the feed data with.
-   *
-   * @var \GuzzleHttp\Client
-   */
-  protected $httpClient;
-
-  /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
   protected $configFactory;
+
+  /**
+   * Instagram API Users Service.
+   *
+   * @var \Drupal\instagram_api\Service\Users
+   */
+  private $instagramApiUsers;
 
   /**
    * Constructs a InstagramBlockBlock object.
@@ -47,15 +45,19 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \GuzzleHttp\Client $http_client
-   *   The Guzzle HTTP client.
+   * @param \Drupal\instagram_api\Service\Users $instagramApiUsers
+   *   Instagram Api Users Service.
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The factory for configuration objects.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, Client $http_client, ConfigFactory $config_factory) {
+  public function __construct(array $configuration,
+                              $plugin_id,
+                              array $plugin_definition,
+                              InstagramApiUsers $instagramApiUsers,
+                              ConfigFactory $config_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->httpClient = $http_client;
+    $this->instagramApiUsers = $instagramApiUsers;
     $this->configFactory = $config_factory;
   }
 
@@ -67,7 +69,7 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('http_client'),
+      $container->get('instagram_api.users'),
       $container->get('config.factory')
     );
   }
@@ -92,12 +94,6 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
   public function blockForm($form, FormStateInterface $form_state) {
     $form['authorise'] = [
       '#markup' => $this->t('Instagram Block requires connecting to a specific Instagram account. You need to be able to log into that account when asked to. The @help page helps with the setup.', ['@help' => Link::fromTextAndUrl($this->t('Authenticate with Instagram'), Url::fromUri('https://www.drupal.org/node/2746185'))->toString()]),
-    ];
-    $form['access_token'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Access Token'),
-      '#description' => $this->t('Your Instagram access token. Eg. 460786509.ab103e5.a54b6834494643588d4217ee986384a8'),
-      '#default_value' => $this->configuration['access_token'],
     ];
 
     $form['count'] = [
@@ -155,7 +151,6 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
       $this->configuration['height'] = $form_state->getValue('height');
       $this->configuration['img_resolution'] = $form_state->getValue('img_resolution');
       $this->configuration['cache_time_minutes'] = $form_state->getValue('cache_time_minutes');
-      $this->configuration['access_token'] = $form_state->getValue('access_token');
     }
   }
 
@@ -172,23 +167,14 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
       return $build;
     }
 
-    // Build url for http request.
-    $uri = "https://api.instagram.com/v1/users/self/media/recent/";
-    $options = [
-      'query' => [
-        'access_token' => $this->configuration['access_token'],
-        'count' => $this->configuration['count'],
-      ],
-    ];
-    $url = Url::fromUri($uri, $options)->toString();
+    $args = ['count' => $this->configuration['count']];
+    $result = $this->instagramApiUsers->getSelfMediaRecent($args);
 
-    // Get the instagram images and decode.
-    $result = $this->fetchData($url);
     if (!$result) {
       return $build;
     }
 
-    foreach ($result['data'] as $post) {
+    foreach ($result as $post) {
       $build['children'][$post['id']] = [
         '#theme' => 'instagram_block_image',
         '#data' => $post,
@@ -211,34 +197,11 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
       $this->configuration['id'],
       $this->configuration['access_token'],
     ];
+
     $build['#cache']['context'][] = 'languages:language_content';
     $build['#cache']['max-age'] = $this->configuration['cache_time_minutes'] * 60;
 
     return $build;
-  }
-
-  /**
-   * Sends a http request to the Instagram API Server.
-   *
-   * @param string $url
-   *   URL for http request.
-   *
-   * @return bool|mixed
-   *   The encoded response containing the instagram images or FALSE.
-   */
-  protected function fetchData($url) {
-    try {
-      $response = $this->httpClient->get($url, ['headers' => ['Accept' => 'application/json']]);
-      $data = Json::decode($response->getBody());
-      if (empty($data)) {
-        return FALSE;
-      }
-
-      return $data;
-    }
-    catch (RequestException $e) {
-      return FALSE;
-    }
   }
 
 }
