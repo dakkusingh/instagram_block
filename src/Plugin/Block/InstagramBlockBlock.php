@@ -59,6 +59,8 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
 
     $this->instagramApiUsers = $instagramApiUsers;
     $this->configFactory = $config_factory;
+    $this->instagramApiSettings = $this->configFactory->get('instagram_api.settings');
+    $this->access_token = $this->instagramApiSettings->get('access_token');
   }
 
   /**
@@ -162,8 +164,14 @@ class InstagramBlockBlock extends BlockBase implements ContainerFactoryPluginInt
     $build = [];
 
     // If no configuration was saved, don't attempt to build block.
-    if (empty($this->configuration['access_token'])) {
-      // @TODO Display a message instructing user to configure module.
+    if ($this->access_token == "") {
+      $msg = $this->t('Instagram API Access Token is not set. It can be set on the <a href=":config_page">configuration page</a>.',
+        [':config_page' => Url::fromRoute('instagram_api.settings')]
+      );
+
+      // Set an error for user to resolve.
+      drupal_set_message($msg, 'error');
+
       return $build;
     }
 
