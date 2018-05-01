@@ -38,11 +38,11 @@ class InstagramBlockPlaceBlockTest extends WebTestBase {
   protected function setUp() {
     parent::setUp();
     // Create and log in an administrative user.
-    $this->adminUser = $this->drupalCreateUser(array(
+    $this->adminUser = $this->drupalCreateUser([
       'administer instagram block',
       'administer blocks',
       'access administration pages',
-    ));
+    ]);
     $this->drupalLogin($this->adminUser);
   }
 
@@ -63,7 +63,7 @@ class InstagramBlockPlaceBlockTest extends WebTestBase {
     // Place an instagram block in the header region.
     $values = [
       'plugin_id' => 'instagram_block_block',
-      'settings' => array('region' => 'header', 'id' => 'instagramblock'),
+      'settings' => ['region' => 'header', 'id' => 'instagramblock'],
     ];
     $this->drupalPlaceBlock($values['plugin_id'], $values['settings']);
 

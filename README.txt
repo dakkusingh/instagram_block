@@ -30,7 +30,8 @@ https://www.drupal.org/project/issues/instagram_block
 REQUIREMENTS
 ------------
 
-This module requires Instagram API Module. https://www.drupal.org/project/instagram_api
+This module requires Instagram API Module.
+See https://www.drupal.org/project/instagram_api
 
 INSTALLATION
 ------------

@@ -4,6 +4,6 @@ description: 'Creates a block that displays images from instagram.'
 package: Social
 core: 8.x
 dependencies:
-  - block
-  - instagram_api
+  - drupal:block
+  - instagram_api:instagram_api
 configure: instagram_block.admin
