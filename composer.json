@@ -1,0 +1,9 @@
+{
+  "name": "drupal/instagram_block",
+  "description": "Instagram Block",
+  "type": "drupal-module",
+  "minimum-stability": "dev",
+  "require": {
+    "drupal/instagram_api": "^1.0"
+  }
+}
